@@ -1,17 +1,18 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import mongoose from 'mongoose';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import multer from 'multer';
-import helmet from 'helmet';
-import morgan from 'morgan';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import express from 'express' 
+import bodyParser from 'body-parser' 
+import mongoose from 'mongoose'
+import cors from 'cors'
+import dotenv from 'dotenv'
+import helmet from 'helmet'
+import multer from 'multer'
+import morgan from 'morgan'
+import path from 'path'
+import { fileURLToPath } from 'node:url'
+
 
 // middleware
-const __filename = fileURLToPath(import.meta.url); // file path 
-const __dirname = path.dirname(__filename); // directory path
+const filename = fileURLToPath(import.meta.url); // file path 
+const dirname = path.dirname(filename); // directory path
 dotenv.config(); // load .env file
 const app = express(); // initialize express
 app.use(express.json()); // parse json
@@ -21,7 +22,7 @@ app.use(morgan("common")); // log http requests
 app.use(bodyParser.json({ limit: "30mb", extended: true })); // parse json
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true })); // parse url encoded
 app.use(cors()); // invoke cors
-app.use("/assets", express.static(path.join(__dirname, "public/assets"))); 
+app.use("/assets", express.static(path.join(dirname, "public/assets"))); 
 
 // file storage 
 const storage = multer.diskStorage({
@@ -33,3 +34,10 @@ const storage = multer.diskStorage({
     }
 });
 const upload = multer({ storage }); // multer instance used to upload files
+
+// database connection
+const PORT = process.env.PORT || 6000;
+mongoose.set("strictQuery", false)
+mongoose.connect(process.env.MONGO_URL).then(()=>{
+    app.listen(PORT, () => console.log(`Server running on port: ${PORT}`));
+}).catch((error) => console.log(`${error} did not connect`));
