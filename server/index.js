@@ -10,6 +10,7 @@ import path from "path";
 import { fileURLToPath } from "node:url";
 import { register } from "./controllers/auth.js";
 
+
 // middleware
 const filename = fileURLToPath(import.meta.url); // file path
 const dirname = path.dirname(filename); // directory path
