@@ -7,9 +7,9 @@ import helmet from "helmet";
 import multer from "multer";
 import morgan from "morgan";
 import path from "path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath } from "url";
+import authRoutes from "./routes//auth.js";
 import { register } from "./controllers/auth.js";
-
 
 // middleware
 const filename = fileURLToPath(import.meta.url); // file path
@@ -38,8 +38,9 @@ const storage = multer.diskStorage({
 const upload = multer({ storage }); // multer instance used to upload files
 
 // routes
-app.post('/auth/register', upload.single('picture'), register); // register user
+app.post("/auth/register", upload.single("picture"), register); // register user
 
+app.use("/auth", authRoutes); // auth routes
 
 // database connection
 const PORT = process.env.PORT || 6000;
