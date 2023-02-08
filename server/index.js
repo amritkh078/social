@@ -9,7 +9,11 @@ import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from "url";
 import authRoutes from "./routes//auth.js";
+import userRoutes from "./routes/users.js";
+import postRoutes from "./routes/posts.js";
 import { register } from "./controllers/auth.js";
+import { createPost } from "./controllers/posts.js";
+import { verifyToken } from "./middleware/auth.js";
 
 // middleware
 const filename = fileURLToPath(import.meta.url); // file path
@@ -37,10 +41,14 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage }); // multer instance used to upload files
 
-// routes
+// routes for file upload
 app.post("/auth/register", upload.single("picture"), register); // register user
+app.post("/posts", verifyToken, upload.single("picture"), createPost); // verify token before posting
 
+// routes
 app.use("/auth", authRoutes); // auth routes
+app.use("/users", userRoutes); // user routes
+app.use("/posts", postRoutes); // post routes
 
 // database connection
 const PORT = process.env.PORT || 6000;
